@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Query Form</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Ask a Question</h1>
+
+        <!-- Form to input the question -->
+        <form id="query-form" action="/get_answer" method="POST">
+            <label for="question">Enter your question:</label>
+            <textarea id="question" name="question" rows="4" cols="50" placeholder="Type your question here..."></textarea><br><br>
+            <input type="submit" value="Submit">
+        </form>
+
+        <div id="response-container">
+            <h2>Answer:</h2>
+            <p id="answer"></p>
+
+            <h3>Relevant Documents:</h3>
+            <pre id="relevant-documents"></pre>
+        </div>
+    </div>
+
+    <script>
+        // This JavaScript handles the form submission and updates the page with the result without refreshing
+        const form = document.getElementById("query-form");
+        const answerElement = document.getElementById("answer");
+        const relevantDocumentsElement = document.getElementById("relevant-documents");
+
+        form.addEventListener("submit", async function(event) {
+            event.preventDefault();  // Prevent the default form submission behavior
+
+            const question = document.getElementById("question").value;
+
+            // Send the question to the backend via a POST request
+            const response = await fetch("/get_answer", {
+                method: "POST",
+                body: new FormData(form)
+            });
+
+            const data = await response.json();
+
+            // Display the answer and relevant documents
+            answerElement.textContent = data.answer || "No answer found.";
+            relevantDocumentsElement.textContent = data.relevant_documents || "No relevant documents found.";
+        });
+    </script>
+</body>
+</html>
